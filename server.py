@@ -18,12 +18,8 @@ while True:
 	
 	received = open('received', 'wb')
 
-	l = c.recv(1024)
-	while l:
-		received.write(l)
-		l = c.recv(1024)
-		print("Receiving file from " + str(addr))
-
+	l = c.recv(32768)
+	received.write(l)
 	received.close()
 	print("File received.")
 
@@ -34,7 +30,11 @@ while True:
 	readable_hash = hashlib.sha256(bytes).hexdigest();
 	print("Hash Generated: " + readable_hash)
 
-	c.send(readable_hash)
+	to_send = open('received', 'rb')
+	l = to_send.read(32768)
+	c.send(l)
+
+	c.send(str.encode(readable_hash))
 	c.close()
 
 s.close()
